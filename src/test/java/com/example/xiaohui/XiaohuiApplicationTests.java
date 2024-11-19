@@ -1,13 +1,13 @@
-package com.hurry.eat;
+package com.example.xiaohui;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EatApplicationTests {
+class XiaohuiApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+	@Test
+	void contextLoads() {
+	}
 
 }
