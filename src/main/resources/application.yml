@@ -6,9 +6,9 @@ spring:
     name: xiaohui
 
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/db_eat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8&useSSL=false
+    url: jdbc:mysql://113.45.179.101:3306/db_eat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8&useSSL=false
     username: root
-    password: 123456
+    password: wzh121212
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis:
