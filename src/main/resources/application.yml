@@ -1,0 +1,16 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: xiaohui
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/db_eat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  type-aliases-package: com.xiaohui.hrm.entity
+  mapper-locations: classpath:mapper/*.xml
