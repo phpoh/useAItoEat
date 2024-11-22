@@ -1,9 +1,6 @@
-package com.example.xiaohui.servece;
+package com.example.xiaohui.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,9 +25,8 @@ public class DouyinHotlistService {
                 String title = (String) hot.get("title");
                 String hotValue = (String) hot.get("hot");
                 Integer index = (Integer) hot.get("index");
-
                 // 这里只是输出数据，你可以选择做其他处理
-                System.out.println("Title: " + title + ", Hot: " + hotValue + ", Index: " + index);
+                System.out.println("热搜标题: " + title + ", 热搜内容: " + hotValue + ", 热度排名: " + index);
             }
         }
     }
