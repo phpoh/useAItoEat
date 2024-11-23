@@ -3,6 +3,7 @@ package com.example.xiaohui.controller;
 import com.example.xiaohui.dto.MessageRequest;
 import com.example.xiaohui.dto.Response;
 import com.example.xiaohui.entity.User;
+import com.example.xiaohui.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,22 +18,20 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserController {
 
-    private final String USERNAME = "admin";
-    private final String PASSWORD = "123123";
 
 
-    @GetMapping("/login")
-    public User login(@Parameter(description = "登录用户的用户名和密码") User user) {
-        if (USERNAME.equals(user.getUsername()) && PASSWORD.equals(user.getPassword())) {
-            // 添加token
-            user.getToken();
-            return user;
+    @PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password) {
+        // 假设用户名和密码校验成功（替换为你的实际校验逻辑）
+        if ("admin".equals(username) && "123456".equals(password)) {
+            // 生成 JWT token
+            return JwtUtil.generateToken(username);
         }
-        return null;
+        return "Invalid username or password";
     }
 
     @PostMapping("/chat")
-    public Response handleChatRequest(@RequestBody  MessageRequest request) {
+    public Response handleChatRequest(@RequestBody MessageRequest request) {
         // 获取前端传递的消息内容
         String message = request.getMessage();
 
@@ -48,5 +47,11 @@ public class UserController {
 
         // 返回响应
         return new Response(responseMessage);
+    }
+
+
+    @GetMapping("/hello")
+    public String sayHello(){
+        return "hello security";
     }
 }

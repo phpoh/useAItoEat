@@ -11,4 +11,5 @@ public class AppConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();  // 创建 RestTemplate 实例
     }
+
 }

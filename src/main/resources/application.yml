@@ -4,14 +4,24 @@ server:
 spring:
   application:
     name: xiaohui
-
   datasource:
     url: jdbc:mysql://113.45.179.101:3306/db_eat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8&useSSL=false
     username: root
     password: wzh121212
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
 
 mybatis:
   type-aliases-package: com.xiaohui.hrm.entity
   mapper-locations: classpath:mapper/*.xml
 
+# mybatis plus的配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: assign_id
