@@ -201,6 +201,11 @@
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
+            const token = localStorage.getItem("token");
+            if(!token){
+                alert('请先登录');
+                return;
+            }
             
             if (message) {
                 // 显示用户消息
@@ -217,7 +222,8 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
                         },
                         body: JSON.stringify({
                             message: message

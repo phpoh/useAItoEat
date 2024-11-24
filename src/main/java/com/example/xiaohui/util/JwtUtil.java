@@ -27,12 +27,20 @@ public class JwtUtil {
         }
     }
 
-    // 从 token 中获取用户名
-    public static String getUsername(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+    // 验证 token 是否有效
+    public static boolean isValidToken(String token) {
+        try {
+            // 解析 token 并验证签名
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims != null;
+        } catch (Exception e) {
+            // 如果 token 无效（解析错误等），抛出异常
+            return false;
+        }
     }
+
+
 }

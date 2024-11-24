@@ -31,9 +31,17 @@ public class UserController {
     }
 
     @PostMapping("/chat")
-    public Response handleChatRequest(@RequestBody MessageRequest request) {
+    public Response handleChatRequest(@RequestBody MessageRequest request,@RequestHeader("Authorization") String authorization) {
         // 获取前端传递的消息内容
         String message = request.getMessage();
+
+        // 从 Authorization 头部获取 token
+        String token = authorization;
+
+        if (token == null || !JwtUtil.isValidToken(token)) {
+            // 如果 token 无效，返回 401 未授权
+            return new Response("未授权访问，Token 无效");
+        }
 
         // 处理消息逻辑（比如与 AI 服务交互，这里只是简单回复）
         String responseMessage = "AI回复：" + message;
