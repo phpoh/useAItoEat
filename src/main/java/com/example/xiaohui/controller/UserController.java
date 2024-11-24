@@ -50,10 +50,12 @@ public class UserController {
     }
 
 
-    @GetMapping("/hello")
+    // 用于前端确认token有效而放行index.html主页
+    @GetMapping("/verify")
     public String sayHello(){
-        return "hello security";
+        return "pass";
     }
+
 
 
 
