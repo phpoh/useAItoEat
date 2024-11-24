@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 助手</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500&display=swap">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>AI 助手</h2>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- 聊天消息将在这里动态添加 -->
+        </div>
+
+        <div class="chat-input-section">
+            <input type="text" id="chat-input" placeholder="发送消息...">
+            <button onclick="sendMessage()" class="send-btn">发送</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
