@@ -16,8 +16,5 @@ public class User {
 
     private String password;
 
-    private String userip; //可以为空
-
-
 
 }
