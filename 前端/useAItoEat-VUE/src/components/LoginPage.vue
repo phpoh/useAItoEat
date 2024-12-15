@@ -107,6 +107,13 @@
           </div>
         </div>
       </div>
+      
+      <!-- 添加 ICP 备案信息 -->
+      <div class="icp-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">
+          蜀ICP备2024112381号
+        </a>
+      </div>
     </div>
   </template>
   
@@ -710,5 +717,33 @@ h1 {
 .scan-button:disabled:hover {
   transform: none;
   box-shadow: none;
+}
+
+.icp-info {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+
+.icp-info a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.icp-info a:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 确保在移动端也能正确显示 */
+@media (max-width: 480px) {
+  .icp-info {
+    bottom: 10px;
+    font-size: 12px;
+  }
 }
 </style> 
