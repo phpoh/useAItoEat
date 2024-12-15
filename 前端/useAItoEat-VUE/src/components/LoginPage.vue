@@ -98,10 +98,13 @@
                 class="account-item"
               >
                 <span class="account-name">{{ account.name }}</span>
-                <span 
-                  class="status-indicator"
-                  :class="{ 'status-busy': account.isBusy }"
-                ></span>
+                <div class="status-wrapper">
+                  <span 
+                    class="status-indicator"
+                    :class="{ 'status-busy': account.isBusy }"
+                  ></span>
+                  <span class="status-text">{{ account.isBusy ? '离线' : '在线' }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -118,7 +121,7 @@
   </template>
   
   <script>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -133,6 +136,23 @@ export default {
     const showNotification = ref(false);
     const notificationMessage = ref('');
     const isWaiting = ref(false);
+
+    // 添加账号状态列表
+    const accounts = ref([
+      { name: 'zhihui', isBusy: true },
+      { name: 'zhihui1', isBusy: true },
+      { name: 'zhihui2', isBusy: false },
+      { name: 'hurry', isBusy: true },
+      { name: 'hurry2', isBusy: true }
+    ]);
+
+    // 添加更新账号状态的函数
+    const updateAccountStatus = (username, isOnline) => {
+      const account = accounts.value.find(acc => acc.name === username);
+      if (account) {
+        account.isBusy = !isOnline;
+      }
+    };
 
     const handlePasswordLogin = async () => {
       if (!username.value || !password.value) {
@@ -190,6 +210,38 @@ export default {
       }
     };
 
+    // 定期检查账号状态
+    onMounted(async () => {
+      // 初始化时检查所有账号状态
+      try {
+        const response = await axios.get('/api/accounts/status');
+        const statusData = response.data;
+        accounts.value.forEach(account => {
+          account.isBusy = !statusData[account.name];
+        });
+      } catch (error) {
+        console.error('获取账号状态失败:', error);
+      }
+
+      // 每30秒更新一次状态
+      const statusInterval = setInterval(async () => {
+        try {
+          const response = await axios.get('/api/accounts/status');
+          const statusData = response.data;
+          accounts.value.forEach(account => {
+            account.isBusy = !statusData[account.name];
+          });
+        } catch (error) {
+          console.error('更新账号状态失败:', error);
+        }
+      }, 30000);
+
+      // 组件卸载时清除定时器
+      onUnmounted(() => {
+        clearInterval(statusInterval);
+      });
+    });
+
     return {
       loginMethod,
       username,
@@ -199,9 +251,13 @@ export default {
       notificationMessage,
       isWaiting,
       handlePasswordLogin,
+      accounts,
+      updateAccountStatus
     };
   },
 };
+
+
 
 </script>  
 
@@ -310,17 +366,28 @@ export default {
   font-size: 16px;
 }
 
+.status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
 .status-indicator {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: #10b981; /* 绿色 - 空闲 */
+  background-color: #10b981; /* 绿色 - 在线 */
   transition: all 0.3s ease;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
 }
 
 .status-indicator.status-busy {
-  background-color: #ef4444; /* 红色 - 忙碌 */
+  background-color: #ef4444; /* 红色 - 离线 */
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 
