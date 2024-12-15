@@ -118,181 +118,92 @@
   </template>
   
   <script>
-  import { ref, onMounted, onUnmounted } from 'vue';
-  import axios from 'axios';
-  
-  export default {
-    name: 'LoginPage',
-    setup() {
-      const loginMethod = ref('password');
-      const username = ref('');
-      const password = ref('');
-      const remember = ref(false);
-  
-      // 账号状态数据
-      const accounts = ref([
-        { name: 'zhihui', isBusy: false },
-        { name: 'zhihui1', isBusy: false },
-        { name: 'zhihui2', isBusy: false },
-        { name: 'hurry', isBusy: false },
-        { name: 'hurry2', isBusy: false }
-      ]);
-  
-      // 添加新的状态控制
-      const showNotification = ref(false);
-      const notificationMessage = ref('');
-      const isWaiting = ref(false);
-  
-      // 模拟接收后端状态更新
-      const updateAccountStatus = (accountName, status) => {
-        const account = accounts.value.find(acc => acc.name === accountName);
-        if (account) {
-          account.isBusy = status;
-        }
-      };
-  
-      const handleQRCodeLogin = async () => {
-        try {
-          if (isWaiting.value) return;
-          
-          isWaiting.value = true;
-          notificationMessage.value = '已发送申请，等待开发者授权';
-          showNotification.value = true;
-  
-          console.log('发起扫码登录请求');
-  
-          // 模拟5秒后被拒绝
-          setTimeout(() => {
-            showNotification.value = false;
-            // 短暂延迟后显示拒绝消息
-            setTimeout(() => {
-              notificationMessage.value = '小辉不想理你，别乱走开发者通道，去账号密码登录吧';
-              showNotification.value = true;
-              isWaiting.value = false;
-              
-              setTimeout(() => {
-                showNotification.value = false;
-              }, 3000);
-            }, 100);
-          }, 5000);
-  
-        } catch (error) {
-          notificationMessage.value = '申请发送失败，请重试';
-          showNotification.value = true;
-          setTimeout(() => {
-            showNotification.value = false;
-          }, 3000);
-          console.error('扫码登录请求失败:', error);
-        }
-      };
-  
-      const handlePasswordLogin = async () => {
-        // 表单验证
-        if (!username.value || !password.value) {
-          notificationMessage.value = '请输入用户名和密码';
-          showNotification.value = true;
-          setTimeout(() => {
-            showNotification.value = false;
-          }, 3000);
-          return;
-        }
-  
-        console.log('开始登录请求...');
-        console.log('用户名:', username.value);
-        console.log('密码:', password.value);
-  
-        isWaiting.value = true;
-        notificationMessage.value = '正在登录...';
+  import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+export default {
+  name: 'LoginPage',
+  setup() {
+    const router = useRouter(); // 获取路由实例
+    const loginMethod = ref('password');
+    const username = ref('');
+    const password = ref('');
+    const remember = ref(false);
+    const showNotification = ref(false);
+    const notificationMessage = ref('');
+    const isWaiting = ref(false);
+
+    const handlePasswordLogin = async () => {
+      if (!username.value || !password.value) {
+        notificationMessage.value = '请输入用户名和密码';
         showNotification.value = true;
-  
-        try {
-          // 使用 URLSearchParams 来发送表单数据
-          const params = new URLSearchParams();
-          params.append('username', username.value);
-          params.append('password', password.value);
-  
-          console.log('发送登录请求，参数:', params.toString());
-          const response = await axios.post('/api/login', params, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          });
-  
-          console.log('收到响应:', response);
-  
-          // 假设后端返回的是 JWT token
-          const token = response.data;
-  
-          if (token && token !== 'Invalid username or password') {
-            // 将 token 存储在 localStorage 中
-            localStorage.setItem('token', token);
-            
-            // 模拟登录后更新状态
-            updateAccountStatus(username.value, true);
-  
-            // 处理登录成功的逻辑（比如跳转到主页）
-            notificationMessage.value = '登录成功，欢迎回来！';
-            setTimeout(() => {
-              showNotification.value = false;
-              // 跳转到主页面或其他页面
-              // this.$router.push('/dashboard');
-            }, 1000);
-          } else {
-            notificationMessage.value = '用户名或密码错误';
-            setTimeout(() => {
-              showNotification.value = false;
-            }, 3000);
-          }
-        } catch (error) {
-          console.error('登录请求详细错误:', error);
-          if (error.response) {
-            console.error('错误响应状态:', error.response.status);
-            console.error('错误响应头:', error.response.headers);
-            console.error('错误响应数据:', error.response.data);
-            notificationMessage.value = `登录失败: ${error.response.data.message || '服务器错误'}`;
-          } else if (error.request) {
-            console.error('请求已发送但未收到响应');
-            console.error('请求详情:', error.request);
-            notificationMessage.value = '服务器无响应，请检查API服务是否启动';
-          } else {
-            console.error('请求配置出错:', error.config);
-            console.error('错误信息:', error.message);
-            notificationMessage.value = '请求发送失败，请检查网络连接';
-          }
-          showNotification.value = true;
+        setTimeout(() => {
+          showNotification.value = false;
+        }, 3000);
+        return;
+      }
+
+      console.log('开始登录请求...');
+      console.log('用户名:', username.value);
+      console.log('密码:', password.value);
+
+      isWaiting.value = true;
+      notificationMessage.value = '正在登录...';
+      showNotification.value = true;
+
+      try {
+        const params = new URLSearchParams();
+        params.append('username', username.value);
+        params.append('password', password.value);
+
+        const response = await axios.post('/api/login', params, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        });
+
+        console.log('收到响应:', response);
+
+        const token = response.data;
+
+        if (token && token !== 'Invalid username or password') {
+          localStorage.setItem('token', token);
+          notificationMessage.value = '登录成功，欢迎回来！';
+          setTimeout(() => {
+            showNotification.value = false;
+            router.push('/Chat'); // 使用路由实例跳转
+          }, 1000);
+        } else {
+          notificationMessage.value = '用户名或密码错误';
           setTimeout(() => {
             showNotification.value = false;
           }, 3000);
-        } finally {
-          isWaiting.value = false;
         }
-      };
-  
-      onMounted(() => {
-        // 连接 WebSocket
-        // const ws = new WebSocket('your-websocket-url');
-        // ws.onmessage = (event) => {
-        //   const { accountName, status } = JSON.parse(event.data);
-        //   updateAccountStatus(accountName, status);
-        // };
-      });
-  
-      return {
-        loginMethod,
-        username,
-        password,
-        remember,
-        accounts,
-        handleQRCodeLogin,
-        handlePasswordLogin,
-        showNotification,
-        notificationMessage,
-        isWaiting,
-      };
-    },
-  };
-  </script>
-  
+      } catch (error) {
+        console.error('登录请求失败:', error);
+        notificationMessage.value = '登录失败，请检查服务器连接';
+        showNotification.value = true;
+        setTimeout(() => {
+          showNotification.value = false;
+        }, 3000);
+      } finally {
+        isWaiting.value = false;
+      }
+    };
+
+    return {
+      loginMethod,
+      username,
+      password,
+      remember,
+      showNotification,
+      notificationMessage,
+      isWaiting,
+      handlePasswordLogin,
+    };
+  },
+};
+
+</script>  
 
 <style scoped>
 .login-container {
