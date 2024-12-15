@@ -42,7 +42,11 @@
               <div class="login-content">
                 <!-- 扫码登录区域 -->
                 <div v-if="loginMethod === 'qrcode'" class="qrcode-area">
-                  <button class="scan-button" @click="handleQRCodeLogin" :disabled="isWaiting">
+                  <button 
+                    class="scan-button" 
+                    @click="handleQRCodeLogin" 
+                    :disabled="isWaiting"
+                  >
                     <span class="button-content">
                       <svg class="qr-icon" viewBox="0 0 24 24" fill="none">
                         <path d="M3 3h6v6H3V3zm12 0h6v6h-6V3zm0 12h6v6h-6v-6zM3 15h6v6H3v-6z" stroke="currentColor" stroke-width="2"/>
@@ -137,7 +141,7 @@ export default {
     const notificationMessage = ref('');
     const isWaiting = ref(false);
 
-    // 添加账号状态列表
+    // 添加账号状���列表
     const accounts = ref([
       { name: 'zhihui', isBusy: true },
       { name: 'zhihui1', isBusy: true },
@@ -210,6 +214,24 @@ export default {
       }
     };
 
+    const handleQRCodeLogin = async () => {
+      isWaiting.value = true;
+      notificationMessage.value = '正在向小辉请求登录权限...';
+      showNotification.value = true;
+
+      // 模拟请求过程
+      setTimeout(() => {
+        notificationMessage.value = '小辉同学不在或拒绝了你的申请';
+        showNotification.value = true;
+        isWaiting.value = false;
+
+        // 3秒后关闭提示
+        setTimeout(() => {
+          showNotification.value = false;
+        }, 3000);
+      }, 5000);
+    };
+
     // 定期检查账号状态
     onMounted(async () => {
       // 初始化时检查所有账号状态
@@ -252,7 +274,8 @@ export default {
       isWaiting,
       handlePasswordLogin,
       accounts,
-      updateAccountStatus
+      updateAccountStatus,
+      handleQRCodeLogin
     };
   },
 };
@@ -686,6 +709,8 @@ h1 {
 .scan-button:disabled {
   opacity: 0.7;
   cursor: wait;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .scan-button {
