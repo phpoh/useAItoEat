@@ -59,9 +59,16 @@ public class UserController {
 
 
     // 用于前端确认token有效而放行index.html主页
-    @GetMapping("/verify")
-    public String sayHello(){
-        return "pass";
+    @PostMapping("/verify")
+    public Response verify(@RequestHeader("Authorization") String authorization) {
+        // 从 Authorization 头部获取 token
+        String token = authorization;
+        if (token == null || !JwtUtil.isValidToken(token)) {
+            // 如果 token 无效，返回 401 未授权
+            return new Response("未授权访问Token无效");
+        }
+        // 返回响应
+        return new Response("Tokenok");
     }
 
 
