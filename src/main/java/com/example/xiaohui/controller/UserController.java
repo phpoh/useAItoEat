@@ -3,6 +3,7 @@ package com.example.xiaohui.controller;
 import com.example.xiaohui.dto.MessageRequest;
 import com.example.xiaohui.dto.Response;
 import com.example.xiaohui.entity.User;
+import com.example.xiaohui.service.UserService;
 import com.example.xiaohui.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +18,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+
+
+
 
 
 
@@ -73,6 +81,11 @@ public class UserController {
 
 
 
+    //获取所有用户信息（三个用户）
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
 
 
 }
