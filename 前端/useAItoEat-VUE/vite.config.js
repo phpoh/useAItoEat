@@ -11,7 +11,7 @@ import path from 'path'; // 引入路径模块
 function getLocalIP() {
   const os = require('os');
   const networks = os.networkInterfaces();
-  
+
   for (const name of Object.keys(networks)) {
     for (const net of networks[name]) {
       // 跳过内部IP和非IPv4地址

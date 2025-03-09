@@ -53,6 +53,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPaperPlane, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
+import OpenAI from "openai";
+
+
 library.add(faPaperPlane, faArrowDown);
 
 export default {
@@ -60,6 +63,14 @@ export default {
   components: {
     FontAwesomeIcon
   },
+
+  const openai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: 'sk-481c34acc1d2464caf2a6c918a046680'
+  });
+
+
+
   data() {
     return {
       message: '',
@@ -77,6 +88,7 @@ export default {
       isWaitingForReply: false, // 是否等待系统回复
     };
   },
+
   methods: {
     handleQuickAction(action) {
       // 选择快捷消息并发送

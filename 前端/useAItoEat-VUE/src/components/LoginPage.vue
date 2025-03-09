@@ -10,41 +10,41 @@
           </div>
         </div>
       </div>
-      
+
       <div class="background-shapes">
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
         <div class="shape shape-3"></div>
       </div>
-      
+
       <div class="login-wrapper">
         <!-- 登录框 -->
         <div class="login-box">
           <div class="glass-effect">
             <h1>Welcome Eat</h1>
-            
+
             <div class="login-methods">
               <div class="tab-header">
-                <button 
-                  :class="{ active: loginMethod === 'qrcode' }" 
+                <button
+                  :class="{ active: loginMethod === 'qrcode' }"
                   @click="loginMethod = 'qrcode'"
                 >
                   移动端授权登录by小辉
                 </button>
-                <button 
-                  :class="{ active: loginMethod === 'password' }" 
+                <button
+                  :class="{ active: loginMethod === 'password' }"
                   @click="loginMethod = 'password'"
                 >
                   账号密码登录
                 </button>
               </div>
-              
+
               <div class="login-content">
                 <!-- 扫码登录区域 -->
                 <div v-if="loginMethod === 'qrcode'" class="qrcode-area">
-                  <button 
-                    class="scan-button" 
-                    @click="handleQRCodeLogin" 
+                  <button
+                    class="scan-button"
+                    @click="handleQRCodeLogin"
                     :disabled="isWaiting"
                   >
                     <span class="button-content">
@@ -56,24 +56,24 @@
                   </button>
                   <p class="tip-text">开发者专属登录通道用户请勿点击！</p>
                 </div>
-  
+
                 <!-- 账号密码登录区域 -->
                 <div v-if="loginMethod === 'password'" class="password-area">
                   <div class="input-wrapper">
-                    <input 
-                      type="text" 
-                      v-model="username" 
-                      placeholder="用户名" 
+                    <input
+                      type="text"
+                      v-model="username"
+                      placeholder="用户名"
                       class="login-input"
                     />
-                    <input 
-                      type="password" 
-                      v-model="password" 
-                      placeholder="密码" 
+                    <input
+                      type="password"
+                      v-model="password"
+                      placeholder="密码"
                       class="login-input"
                     />
                   </div>
-                  
+
                   <div class="remember-forgot">
                     <label class="remember">
                       <input type="checkbox" v-model="remember" />
@@ -81,7 +81,7 @@
                       <span>记住我</span>
                     </label>
                   </div>
-                  
+
                   <button @click="handlePasswordLogin" class="login-button">
                     <span class="button-content">登 录</span>
                   </button>
@@ -90,20 +90,20 @@
             </div>
           </div>
         </div>
-  
+
         <!-- 账号状态窗口 -->
         <div class="status-box">
           <div class="glass-effect">
             <h2>账号状态</h2>
             <div class="account-list">
-              <div 
-                v-for="account in accounts" 
+              <div
+                v-for="account in accounts"
                 :key="account.name"
                 class="account-item"
               >
                 <span class="account-name">{{ account.name }}</span>
                 <div class="status-wrapper">
-                  <span 
+                  <span
                     class="status-indicator"
                     :class="{ 'status-busy': account.isBusy }"
                   ></span>
@@ -114,7 +114,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 添加 ICP 备案信息 -->
       <div class="icp-info">
         <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">
@@ -123,11 +123,14 @@
       </div>
     </div>
   </template>
-  
+
   <script>
   import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+
+import OpenAI from "openai";
+
 
 export default {
   name: 'LoginPage',
@@ -140,6 +143,9 @@ export default {
     const showNotification = ref(false);
     const notificationMessage = ref('');
     const isWaiting = ref(false);
+
+
+
 
     // 添加账号状���列表
     const accounts = ref([
@@ -282,7 +288,7 @@ export default {
 
 
 
-</script>  
+</script>
 
 <style scoped>
 .login-container {
@@ -749,4 +755,4 @@ h1 {
     font-size: 12px;
   }
 }
-</style> 
+</style>
