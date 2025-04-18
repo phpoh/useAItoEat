@@ -16,6 +16,10 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    public User getUsername(String username) {
+        return userMapper.findByUsername(username);
+    }
+
     public List<User> getAllUsers() {
         return userMapper.findAll();
     }

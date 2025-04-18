@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -22,21 +23,27 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
-
-
-
-
-
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password) {
-        // 假设用户名和密码校验成功（替换为你的实际校验逻辑）
-        if ("admin".equals(username) && "123456".equals(password)) {
-            // 生成 JWT token
-            return JwtUtil.generateToken(username);
+        // 从服务中获取用户名对应的用户（假设 UserService 实现了获取用户的逻辑）
+        User user = userService.getUsername(username);
+
+        // 如果用户存在
+        if (user != null) {
+            // 比较数据库中存储的密码和输入的密码
+            if (user.getPassword().equals(password)) {
+                // 密码匹配，生成 JWT token（假设 JwtUtil 是一个工具类）
+                return JwtUtil.generateToken(user.getUsername());
+            } else {
+                // 密码不正确
+                return "Invalid password";
+            }
+        } else {
+            // 用户不存在
+            return "User not found";
         }
-        return "Invalid username or password";
     }
+
 
     @PostMapping("/chat")
     public Response handleChatRequest(@RequestBody MessageRequest request,@RequestHeader("Authorization") String authorization) {
