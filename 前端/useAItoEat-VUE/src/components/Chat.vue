@@ -64,12 +64,6 @@ export default {
     FontAwesomeIcon
   },
 
-  const openai = new OpenAI({
-    baseURL: 'https://api.deepseek.com',
-    apiKey: 'sk-481c34acc1d2464caf2a6c918a046680'
-  });
-
-
 
   data() {
     return {

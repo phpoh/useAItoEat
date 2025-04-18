@@ -1,7 +1,7 @@
 package com.example.xiaohui.service;
 
-import com.example.xiaohui.data.UserData;
 import com.example.xiaohui.entity.User;
+import com.example.xiaohui.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +10,19 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserData userData;
+    private final UserMapper userMapper;
 
-
-    public List<User> getAllUsers(){
-        return userData.USER_LIST;
+    public UserService(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
+
+    public List<User> getAllUsers() {
+        return userMapper.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userMapper.findById(id);
+    }
+
+
 }

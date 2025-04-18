@@ -18,3 +18,5 @@ spring:
 ## 2. Mybatis XML存放路径和命名格式
 #mybatis:
 #  mapper-locations: classpath:mybatis/*Mapper.xml
+mybatis:
+  type-aliases-package: com.example.xiaohui.entity
