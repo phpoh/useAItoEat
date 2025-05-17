@@ -8,14 +8,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 允许跨域访问的路径
-                .allowedOrigins("*") // 允许所有来源
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 允许的请求方法
-                .allowedHeaders("*") // 允许的请求头
-                .maxAge(3600); // 预检请求缓存的时间
+        registry.addMapping("/**")
+                .allowedOrigins(
+                        "http://localhost:5173",
+                        "http://127.0.0.1:5173",
+                        "https://localhost:5173",
+                        "https://192.168.43.50:5173",
+                        "https://192.168.112.1:5173"
+                ) // 指定前端地址注意前端是https!!!!!!!!!
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true) // 允许携带认证信息（如 JWT Token）
+                .maxAge(3600);
     }
 }
-
-
-
-

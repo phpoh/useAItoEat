@@ -11,11 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.example.xiaohui.entity.Msg;
+import com.example.xiaohui.entity.UserLoginDTO;
 
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -23,26 +25,59 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password) {
-        // 从服务中获取用户名对应的用户（假设 UserService 实现了获取用户的逻辑）
-        User user = userService.getUsername(username);
+//CORS需要改为jsonn
+//    @PostMapping("/login")
+//    public String login(@RequestParam String username, @RequestParam String password) {
+//        // 从服务中获取用户名对应的用户（假设 UserService 实现了获取用户的逻辑）
+//        User user = userService.getUsername(username);
+//
+//        // 如果用户存在
+//        if (user != null) {
+//            // 比较数据库中存储的密码和输入的密码
+//            if (user.getPassword().equals(password)) {
+//                // 密码匹配，生成 JWT token（假设 JwtUtil 是一个工具类）
+//                return JwtUtil.generateToken(user.getUsername());
+//            } else {
+//                // 密码不正确
+//                return "Invalid password";
+//            }
+//        } else {
+//            // 用户不存在
+//            return "User not found";
+//        }
+//    }
 
-        // 如果用户存在
-        if (user != null) {
-            // 比较数据库中存储的密码和输入的密码
-            if (user.getPassword().equals(password)) {
-                // 密码匹配，生成 JWT token（假设 JwtUtil 是一个工具类）
-                return JwtUtil.generateToken(user.getUsername());
-            } else {
-                // 密码不正确
-                return "Invalid password";
-            }
+    @PostMapping("/login")
+    public String login(@RequestBody UserLoginDTO loginDTO) {
+        User user = userService.getUsername(loginDTO.getUsername());
+        if (user != null && user.getPassword().equals(loginDTO.getPassword())) {
+            return JwtUtil.generateToken(user.getUsername());
         } else {
-            // 用户不存在
-            return "User not found";
+            return "Invalid username or password";
         }
     }
+
+
+    @PostMapping("/chatAi")
+    @ResponseBody
+    public Msg chatAi(@RequestBody Msg msg) {
+        String msg1 = msg.getMsg(); //暂时没有做任何处理
+
+
+
+        return msg;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
     @PostMapping("/chat")
@@ -74,6 +109,7 @@ public class UserController {
 
 
     // 用于前端确认token有效而放行index.html主页
+    //自动验证了可以不需要这样手动检测
     @PostMapping("/verify")
     public Response verify(@RequestHeader("Authorization") String authorization) {
         // 从 Authorization 头部获取 token
@@ -123,6 +159,7 @@ public class UserController {
         Long id = Long.valueOf(user.getId());  // 这里 user.getId() 已经是 Long 类型了
         return userService.getUserById(id);
     }
+
 
 
 }

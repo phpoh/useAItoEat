@@ -16,32 +16,30 @@ public class JWTInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 从请求头中获取 token
-        String token = request.getHeader("Authorization");
+        // 1. 放行OPTIONS请求，避免CORS预检失败
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return false; // 不继续后续拦截器链
+        }
 
-        if (token == null || token.isEmpty()) {
-            // 没有 token，直接拦截请求
+        // 2. 从请求头获取token
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token is missing or invalid");
             return false;
         }
 
-        // 解析并验证 token 的逻辑
+        token = token.substring(7); // 去掉 Bearer 前缀
+
         try {
-            // 假设有一个工具类 JwtUtil 来验证和解析 token
-            boolean isValid = JwtUtil.verifyToken(token); // 替换为你的实际逻辑
-            if (!isValid) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token is invalid");
-                return false;
-            }
+            // 3. 验证 token 是否有效（使用 JwtUtil 工具）
+            JwtUtil.verifyToken(token);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Error validating token");
             return false;
         }
 
-        // token 验证通过，允许请求继续处理
-        return true;
+        return true; // 验证通过
     }
+
 }
