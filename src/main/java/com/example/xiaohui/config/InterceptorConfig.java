@@ -27,6 +27,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/api/login",                  // 登录接口
                         "/api/verify",                 // 验证 token 接口
+                        "/api/id/**",
+                        "/api/idd",
+                        "/api/iddd",
                         "/api/users",                  // 获取用户列表接口
                         "/swagger-resources/**",       // Swagger 相关资源
                         "/webjars/**",                 // 静态资源

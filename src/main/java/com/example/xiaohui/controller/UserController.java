@@ -95,4 +95,34 @@ public class UserController {
     }
 
 
+    //获取id为1400000的用户信息
+    //  127.0.0.1:8888/api/id/2
+    @GetMapping("/id/{id}")
+    public User getUserById(@PathVariable("id") Long id) {
+        return userService.getUserById(id);  // 返回的是单个 User
+    }
+
+
+    //查询参数的格式   127.0.0.1:8888/api/idd?id=2
+    @GetMapping("/idd")
+    public User getUserById2(@RequestParam("id") Long id) {
+        return userService.getUserById(id);
+    }
+
+
+    //用json格式
+    //127.0.0.1:8888/api/iddd
+    /***
+     *
+     * @param user
+     * @return
+     */
+    @PostMapping("/iddd")
+    @ResponseBody
+    public User getUserById3(@RequestBody User user) {
+        Long id = Long.valueOf(user.getId());  // 这里 user.getId() 已经是 Long 类型了
+        return userService.getUserById(id);
+    }
+
+
 }
