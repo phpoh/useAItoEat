@@ -3,6 +3,8 @@ package com.example.xiaohui.controller;
 import com.example.xiaohui.dto.MessageRequest;
 import com.example.xiaohui.dto.Response;
 import com.example.xiaohui.entity.User;
+import com.example.xiaohui.service.BigModel;
+import com.example.xiaohui.service.JdkBigModel;
 import com.example.xiaohui.service.UserService;
 import com.example.xiaohui.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BigModel bigModel;
+
+    @Autowired
+    private JdkBigModel jdkBigModel;
 
 //CORS需要改为jsonn
 //    @PostMapping("/login")
@@ -57,27 +65,25 @@ public class UserController {
         }
     }
 
+//    用http的方式调用
+//    @PostMapping("/chatAi")
+//    @ResponseBody
+//    public Msg chatAi(@RequestBody Msg msg) {
+//        String userInput = msg.getMsg(); // 获取用户输入
+//        String response = bigModel.chatWithBigModel(userInput); // 调用 service
+//
+//        // 将响应内容重新封装成 Msg 返回（你也可以只返回部分内容）
+//        return new Msg(response);
+//    }
 
+    //用JDK的方式调用
     @PostMapping("/chatAi")
     @ResponseBody
     public Msg chatAi(@RequestBody Msg msg) {
-        String msg1 = msg.getMsg(); //暂时没有做任何处理
-
-
-
-        return msg;
+        String userInput = msg.getMsg();
+        String response = jdkBigModel.chat(userInput);  // 调用 JdkBigModel 中的 chat 方法
+        return new Msg(response);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     @PostMapping("/chat")
@@ -159,6 +165,8 @@ public class UserController {
         Long id = Long.valueOf(user.getId());  // 这里 user.getId() 已经是 Long 类型了
         return userService.getUserById(id);
     }
+
+
 
 
 

@@ -31,7 +31,10 @@ public class DouyinHotlistService {
         }
     }
 
-
+    public static void main(String[] args) {
+        DouyinHotlistService service = new DouyinHotlistService();
+        service.fetchDouyinHotlist();
+    }
 
 }
 
