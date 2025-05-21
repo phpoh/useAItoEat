@@ -2,18 +2,18 @@
   <div class="app-container">
     <!-- AI 聊天窗口 -->
     <div class="chat-box">
-      <div class="chat-title">🤖 AI 聊天</div>
+      <div class="chat-title">🤖 AI 数字分身</div>
       <div class="chat-messages">
         <div v-for="msg in messages" :key="msg.id" class="chat-message">
           <strong>{{ msg.sender }}:</strong> {{ msg.text }}
         </div>
         <!-- 打字输出动画 -->
         <div v-if="typingText" class="chat-message">
-          <strong>机器人:</strong> {{ typingText }}
+          <strong>数字分身:</strong> {{ typingText }}
         </div>
         <!-- 等待中动画 -->
         <div v-else-if="isWaitingForReply" class="chat-message typing-indicator">
-          <strong>机器人:</strong>
+          <strong>数字分身:</strong>
           正在输入<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
         </div>
       </div>

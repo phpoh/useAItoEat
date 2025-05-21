@@ -5,19 +5,18 @@
     </div>
 
     <div class="login-box">
-      <h1>Welcome Eat</h1>
+      <h1>开发学习测试用</h1>
       <div class="tab-header">
         <button :class="{ active: loginMethod === 'qrcode' }" @click="loginMethod = 'qrcode'">暗号登录</button>
         <button :class="{ active: loginMethod === 'password' }" @click="loginMethod = 'password'">账号密码登录</button>
       </div>
 
-      <!-- 扫码登录变成特殊命令输入 -->
       <div v-if="loginMethod === 'qrcode'" class="qrcode-area">
         <input type="text" v-model="specialCommand" placeholder="请输入登录暗号" />
         <button @click="handleSpecialCommandLogin" :disabled="isWaiting">
           {{ isWaiting ? '等待响应...' : '确认登录' }}
         </button>
-        <p>修改暗号 如 change:oldName,newName 或直接输入登录暗号</p>
+        <p>修改暗号命令 例： change:oldName,newName 或直接输入暗号进行登录</p>
       </div>
 
       <div v-if="loginMethod === 'password'" class="password-area">
@@ -31,6 +30,11 @@
       </div>
     </div>
   </div>
+
+  <!-- 备案号信息 -->
+  <div class="footer">
+    <a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2023011467号-1</a>
+  </div>
 </template>
 
 <script setup>
@@ -41,13 +45,10 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const loginMethod = ref('password');
-
 const username = ref('');
 const password = ref('');
 const remember = ref(false);
-
 const specialCommand = ref('');
-
 const showNotification = ref(false);
 const notificationMessage = ref('');
 const isWaiting = ref(false);
@@ -87,7 +88,6 @@ const handlePasswordLogin = async () => {
   }
 };
 
-// 处理扫码登录的特殊命令
 const handleSpecialCommandLogin = async () => {
   if (!specialCommand.value) {
     return showMsg('请输入登录暗号');
@@ -100,7 +100,6 @@ const handleSpecialCommandLogin = async () => {
     const cmd = specialCommand.value.trim();
 
     if (cmd.startsWith('change:')) {
-      // 格式 change:oldName,newName
       const params = cmd.slice(7).split(',');
       if (params.length !== 2) {
         showMsg('修改命令格式错误，应为 change:oldName,newName');
@@ -117,9 +116,7 @@ const handleSpecialCommandLogin = async () => {
       } else {
         showMsg('修改失败：' + changeResp.data);
       }
-
     } else {
-      // 默认当作登录命令处理（不再需要 login: 前缀）
       const username = cmd;
       const loginResp = await axios.post('http://127.0.0.1:8888/viplogin/login', {
         name: username,
@@ -132,7 +129,6 @@ const handleSpecialCommandLogin = async () => {
         showMsg('登录失败：用户名或密码错误');
       }
     }
-
   } catch (error) {
     console.error(error);
     showMsg('服务器错误，操作失败');
@@ -140,7 +136,6 @@ const handleSpecialCommandLogin = async () => {
     isWaiting.value = false;
   }
 };
-
 </script>
 
 <style scoped>
@@ -219,5 +214,23 @@ button {
   border-radius: 8px;
   margin-bottom: 20px;
   text-align: center;
+}
+
+.footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+}
+
+.footer a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
 </style>
