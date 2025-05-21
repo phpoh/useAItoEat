@@ -7,17 +7,17 @@
     <div class="login-box">
       <h1>Welcome Eat</h1>
       <div class="tab-header">
-        <button :class="{ active: loginMethod === 'qrcode' }" @click="loginMethod = 'qrcode'">扫码登录</button>
+        <button :class="{ active: loginMethod === 'qrcode' }" @click="loginMethod = 'qrcode'">暗号登录</button>
         <button :class="{ active: loginMethod === 'password' }" @click="loginMethod = 'password'">账号密码登录</button>
       </div>
 
       <!-- 扫码登录变成特殊命令输入 -->
       <div v-if="loginMethod === 'qrcode'" class="qrcode-area">
-        <input type="text" v-model="specialCommand" placeholder="请输入特殊命令" />
+        <input type="text" v-model="specialCommand" placeholder="请输入登录暗号" />
         <button @click="handleSpecialCommandLogin" :disabled="isWaiting">
           {{ isWaiting ? '等待响应...' : '确认登录' }}
         </button>
-        <p>支持格式：修改命令 如 change:oldName,newName 或登录命令 如 login:username</p>
+        <p>修改暗号 如 change:oldName,newName 或直接输入登录暗号</p>
       </div>
 
       <div v-if="loginMethod === 'password'" class="password-area">
@@ -90,7 +90,7 @@ const handlePasswordLogin = async () => {
 // 处理扫码登录的特殊命令
 const handleSpecialCommandLogin = async () => {
   if (!specialCommand.value) {
-    return showMsg('请输入特殊命令');
+    return showMsg('请输入登录暗号');
   }
 
   isWaiting.value = true;
@@ -118,14 +118,9 @@ const handleSpecialCommandLogin = async () => {
         showMsg('修改失败：' + changeResp.data);
       }
 
-    } else if (cmd.startsWith('login:')) {
-      // 格式 login:username
-      const username = cmd.slice(6).trim();
-      if (!username) {
-        showMsg('登录命令格式错误，应为 login:username');
-        isWaiting.value = false;
-        return;
-      }
+    } else {
+      // 默认当作登录命令处理（不再需要 login: 前缀）
+      const username = cmd;
       const loginResp = await axios.post('http://127.0.0.1:8888/viplogin/login', {
         name: username,
       });
@@ -136,10 +131,8 @@ const handleSpecialCommandLogin = async () => {
       } else {
         showMsg('登录失败：用户名或密码错误');
       }
-
-    } else {
-      showMsg('命令格式不支持，请输入 change: 或 login: 开头的命令');
     }
+
   } catch (error) {
     console.error(error);
     showMsg('服务器错误，操作失败');
@@ -147,6 +140,7 @@ const handleSpecialCommandLogin = async () => {
     isWaiting.value = false;
   }
 };
+
 </script>
 
 <style scoped>

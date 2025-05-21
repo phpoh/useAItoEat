@@ -1,10 +1,9 @@
 package com.example.xiaohui.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,27 +13,23 @@ public class DouyinHotlistService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Scheduled(fixedRate = 60000)  // 每分钟执行一次
-    public void fetchDouyinHotlist() {
+    /**
+     * 获取抖音热榜数据
+     * @return 热榜条目列表，每个条目是一个 Map，包含 title、hot、index 等字段
+     */
+    public List<Map<String, Object>> getDouyinHotlist() {
         String url = "https://api.vvhan.com/api/hotlist/douyinHot";
-        Map<String, Object> response = restTemplate.getForObject(url, Map.class);  // 使用 getForObject 直接获取响应数据
-
-        if (response != null && (Boolean) response.get("success")) {
-            List<Map> hotlist = (List<Map>) response.get("data");
-            for (Map hot : hotlist) {
-                String title = (String) hot.get("title");
-                String hotValue = (String) hot.get("hot");
-                Integer index = (Integer) hot.get("index");
-                // 这里只是输出数据，你可以选择做其他处理
-                System.out.println("热搜标题: " + title + ", 热搜内容: " + hotValue + ", 热度排名: " + index);
+        try {
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+            if (response != null && Boolean.TRUE.equals(response.get("success"))) {
+                return (List<Map<String, Object>>) response.get("data");
+            } else {
+                return Collections.emptyList();
             }
+        } catch (Exception e) {
+            // 打印错误日志或抛出业务异常
+            System.err.println("获取抖音热榜失败: " + e.getMessage());
+            return Collections.emptyList();
         }
     }
-
-    public static void main(String[] args) {
-        DouyinHotlistService service = new DouyinHotlistService();
-        service.fetchDouyinHotlist();
-    }
-
 }
-

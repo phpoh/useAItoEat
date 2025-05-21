@@ -36,7 +36,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/v2/**",
                         "/swagger-ui.html/**",
                         "/viplogin/login",
-                        "/viplogin/change"
+                        "/viplogin/change",
+                        "/hot/douyin"
                 );
     }
 }
