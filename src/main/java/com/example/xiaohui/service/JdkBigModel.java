@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public  class JdkBigModel {
+public class JdkBigModel {
 
     private final OpenAIClient client;
+    private final String systemPrompt = "你的名字叫小辉，24岁，四川人，是一个程序员，很喜欢编程。好了接下来是我要要问的问题：";
 
     public JdkBigModel() {
         this.client = OpenAIOkHttpClient.builder()
@@ -22,18 +23,12 @@ public  class JdkBigModel {
 
     public String chat(String userMessage) {
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-                .addUserMessage(userMessage)
-                .model("glm-4")  // 替换成智谱的模型名
+                .addSystemMessage(systemPrompt)   // 添加系统消息，初始化角色身份
+                .addUserMessage(userMessage)      // 添加用户消息
+                .model("glm-4")
                 .build();
 
         ChatCompletion completion = client.chat().completions().create(params);
-        // content() 返回 Optional<String>，取出值或返回空字符串
         return completion.choices().get(0).message().content().orElse("");
-    }
-    // main 函数测试
-    public static void main(String[] args) {
-        JdkBigModel model = new JdkBigModel();
-        String response = model.chat("你好，帮我写一句Java代码");
-        System.out.println("模型回复：" + response);
     }
 }
