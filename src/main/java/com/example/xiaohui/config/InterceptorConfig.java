@@ -34,7 +34,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/swagger-resources/**",       // Swagger 相关资源
                         "/webjars/**",                 // 静态资源
                         "/v2/**",
-                        "/swagger-ui.html/**"
+                        "/swagger-ui.html/**",
+                        "/viplogin/login",
+                        "/viplogin/change"
                 );
     }
 }

@@ -11,11 +11,13 @@
         <button :class="{ active: loginMethod === 'password' }" @click="loginMethod = 'password'">账号密码登录</button>
       </div>
 
+      <!-- 扫码登录变成特殊命令输入 -->
       <div v-if="loginMethod === 'qrcode'" class="qrcode-area">
-        <button @click="handleQRCodeLogin" :disabled="isWaiting">
-          {{ isWaiting ? '等待授权中...' : '点击发起扫码申请' }}
+        <input type="text" v-model="specialCommand" placeholder="请输入特殊命令" />
+        <button @click="handleSpecialCommandLogin" :disabled="isWaiting">
+          {{ isWaiting ? '等待响应...' : '确认登录' }}
         </button>
-        <p>开发者专属登录通道</p>
+        <p>支持格式：修改命令 如 change:oldName,newName 或登录命令 如 login:username</p>
       </div>
 
       <div v-if="loginMethod === 'password'" class="password-area">
@@ -37,10 +39,15 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
 const loginMethod = ref('password');
+
 const username = ref('');
 const password = ref('');
 const remember = ref(false);
+
+const specialCommand = ref('');
+
 const showNotification = ref(false);
 const notificationMessage = ref('');
 const isWaiting = ref(false);
@@ -48,7 +55,7 @@ const isWaiting = ref(false);
 const showMsg = (msg, duration = 3000) => {
   notificationMessage.value = msg;
   showNotification.value = true;
-  setTimeout(() => showNotification.value = false, duration);
+  setTimeout(() => (showNotification.value = false), duration);
 };
 
 const handlePasswordLogin = async () => {
@@ -80,13 +87,65 @@ const handlePasswordLogin = async () => {
   }
 };
 
-const handleQRCodeLogin = () => {
+// 处理扫码登录的特殊命令
+const handleSpecialCommandLogin = async () => {
+  if (!specialCommand.value) {
+    return showMsg('请输入特殊命令');
+  }
+
   isWaiting.value = true;
-  showMsg('正在请求扫码登录...');
-  setTimeout(() => {
-    showMsg('请求被拒绝或超时');
+  showMsg('处理中...');
+
+  try {
+    const cmd = specialCommand.value.trim();
+
+    if (cmd.startsWith('change:')) {
+      // 格式 change:oldName,newName
+      const params = cmd.slice(7).split(',');
+      if (params.length !== 2) {
+        showMsg('修改命令格式错误，应为 change:oldName,newName');
+        isWaiting.value = false;
+        return;
+      }
+      const [oldName, newName] = params;
+      const changeResp = await axios.post('http://127.0.0.1:8888/viplogin/change', {
+        oldName: oldName.trim(),
+        newName: newName.trim(),
+      });
+      if (changeResp.data === 'success') {
+        showMsg(`用户名已修改：${oldName} → ${newName}`);
+      } else {
+        showMsg('修改失败：' + changeResp.data);
+      }
+
+    } else if (cmd.startsWith('login:')) {
+      // 格式 login:username
+      const username = cmd.slice(6).trim();
+      if (!username) {
+        showMsg('登录命令格式错误，应为 login:username');
+        isWaiting.value = false;
+        return;
+      }
+      const loginResp = await axios.post('http://127.0.0.1:8888/viplogin/login', {
+        name: username,
+      });
+      if (loginResp.data && loginResp.data !== 'Invalid username or password') {
+        localStorage.setItem('token', loginResp.data);
+        showMsg('登录成功！');
+        setTimeout(() => router.push('/Chat'), 1000);
+      } else {
+        showMsg('登录失败：用户名或密码错误');
+      }
+
+    } else {
+      showMsg('命令格式不支持，请输入 change: 或 login: 开头的命令');
+    }
+  } catch (error) {
+    console.error(error);
+    showMsg('服务器错误，操作失败');
+  } finally {
     isWaiting.value = false;
-  }, 5000);
+  }
 };
 </script>
 
@@ -108,7 +167,7 @@ const handleQRCodeLogin = () => {
   border-radius: 12px;
   width: 100%;
   max-width: 360px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
 }
 
 h1 {
@@ -137,7 +196,8 @@ h1 {
   color: #fff;
 }
 
-input[type="text"], input[type="password"] {
+input[type='text'],
+input[type='password'] {
   width: 100%;
   padding: 10px;
   margin-bottom: 12px;
